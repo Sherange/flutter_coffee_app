@@ -10,11 +10,13 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final _pageCoffeController = PageController(viewportFraction: 0.45);
-  final _pageTextController = PageController();
+  final _pageCoffeController =
+      PageController(viewportFraction: 0.45, initialPage: initialPage.toInt());
 
-  double _currentPage = 0.0;
-  double _textPage = 0.0;
+  final _pageTextController = PageController(initialPage: initialPage.toInt());
+
+  double _currentPage = initialPage;
+  double _textPage = initialPage;
 
   void _coffeeScrollListner() {
     setState(() {
@@ -49,6 +51,9 @@ class _ListScreenState extends State<ListScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: BackButton(
+          color: Colors.black,
+        ),
       ),
       body: Stack(
         children: [
@@ -106,9 +111,12 @@ class _ListScreenState extends State<ListScreen> {
                         ..scale(value),
                       child: Opacity(
                         opacity: opacity,
-                        child: Image.asset(
-                          coffee.image,
-                          fit: BoxFit.fitHeight,
+                        child: Hero(
+                          tag: coffee.name,
+                          child: Image.asset(
+                            coffee.image,
+                            fit: BoxFit.fitHeight,
+                          ),
                         ),
                       ),
                     ),
