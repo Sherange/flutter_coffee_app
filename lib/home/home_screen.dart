@@ -1,3 +1,4 @@
+import 'package:coffe_app_animations/constants/app_const.dart';
 import 'package:coffe_app_animations/models/coffee.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _pageCoffeController = PageController(viewportFraction: 0.45);
+  final _pageTextController = PageController();
+
   double _currentPage = 0.0;
+  double _textPage = 0.0;
 
   void _coffeeScrollListner() {
     setState(() {
@@ -18,16 +22,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _textScrollListner() {
+    _textPage = _currentPage;
+  }
+
   @override
   void initState() {
     _pageCoffeController.addListener(_coffeeScrollListner);
+    _pageTextController.addListener(_textScrollListner);
     super.initState();
   }
 
   @override
   void dispose() {
     _pageCoffeController.removeListener(_coffeeScrollListner);
+    _pageTextController.removeListener(_textScrollListner);
     _pageCoffeController.dispose();
+    _pageTextController.dispose();
     super.dispose();
   }
 
@@ -59,15 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // Positioned(
-          //   left: 0,
-          //   right: 0,
-          //   top: 0,
-          //   height: 100,
-          //   child: Container(
-          //     color: Colors.red,
-          //   ),
-          // ),
           Transform.scale(
             scale: 1.6,
             alignment: Alignment.bottomCenter,
@@ -75,7 +77,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: _pageCoffeController,
                 scrollDirection: Axis.vertical,
                 itemCount: coffees.length,
+                onPageChanged: (value) {
+                  if (value < coffees.length) {
+                    _pageTextController.animateToPage(
+                      value,
+                      duration: duration,
+                      curve: Curves.easeOut,
+                    );
+                  }
+                },
                 itemBuilder: (context, index) {
+                  // if (index == 0) {
+                  //   return SizedBox.shrink();
+                  // }
                   final coffee = coffees[index];
                   final result = _currentPage - index + 1;
 
@@ -100,7 +114,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 }),
-          )
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            height: 100,
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView.builder(
+                      itemCount: coffees.length,
+                      controller: _pageTextController,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final opacity =
+                            (1 - (index - _textPage).abs()).clamp(0.0, 1.0);
+                        return Opacity(
+                            opacity: opacity,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                coffees[index].name,
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                style: TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.w800),
+                              ),
+                            ));
+                      }),
+                ),
+                SizedBox(height: 15),
+                AnimatedSwitcher(
+                  duration: duration,
+                  child: Text(
+                    '\$${coffees[_currentPage.toInt()].price}',
+                    style: TextStyle(
+                      fontSize: 30,
+                    ),
+                    key: Key(coffees[_currentPage.toInt()].name),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -9,9 +9,10 @@ final random = Random();
 final coffees = List.generate(
   names.length,
   (index) => Coffee(
-      name: names[index],
-      image: 'images/coffee/${index + 1}.png',
-      price: _doubleInRange(random, 3, 7)),
+    name: names[index],
+    image: 'images/coffee/${index + 1}.png',
+    price: index + 1.toDouble(),
+  ),
 );
 
 class Coffee {
