@@ -1,4 +1,4 @@
-import 'package:coffe_app_animations/home/home_screen.dart';
+import 'package:coffe_app_animations/coffee_list/list_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MainCoffeeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Coffee App Animations',
       theme: ThemeData.light(),
-      home: HomeScreen(),
+      home: ListScreen(),
     );
   }
 }
